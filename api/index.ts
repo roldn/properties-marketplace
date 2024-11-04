@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import userRouter from './routes/user.route';
@@ -29,3 +29,14 @@ app.get('/test', (req,res) =>{
 
 app.use("/api/user", userRouter)
 app.use("/api/auth", authRouter)
+
+//@ts-ignore
+app.use((err: any, req: Request, res: Response, next: NextFunction ) => {
+    const statusCode = err.statusCode || 500
+    const message = err.message || 'Internal Server Error';
+    return res.status(statusCode).json({
+        success: false,
+        statusCode: statusCode,
+        message: message,
+    })
+})
