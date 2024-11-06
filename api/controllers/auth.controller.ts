@@ -3,10 +3,9 @@ import User from "../models/user.model";
 import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error";
 
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 import { userInfo } from "os";
 import { SignJsonWebKeyInput } from "crypto";
-
 
 export const signup = async (
   req: Request,
@@ -38,21 +37,30 @@ export const signin = async (
 ) => {
   const { email, password } = req.body;
   try {
-    const validUser = await User.findOne({email: email}).lean();
+    const validUser = await User.findOne({ email: email }).lean();
 
-    if(!validUser){return next(errorHandler(404, '¡User not found!'))};
+    if (!validUser) {
+      return next(errorHandler(404, "¡User not found!"));
+    }
 
     const validPassword = bcryptjs.compareSync(password, validUser.password);
 
-    if(!validPassword){return next(errorHandler(401, '¡Wrong credentials!'))};
+    if (!validPassword) {
+      return next(errorHandler(401, "¡Wrong credentials!"));
+    }
 
-    const token = jwt.sign({id: validUser.id}, process.env.JWT_SECRET!);
+    const token = jwt.sign({ id: validUser.id }, process.env.JWT_SECRET!);
 
-    const {password: pass, ...userInfo} = validUser;
+    const { password: pass, ...userInfo } = validUser;
 
-    res.cookie('access_token', token, {httpOnly: true, expires:new Date(Date.now()+ 24*60*60)}).status(200).json(userInfo)
-
+    res
+      .cookie("access_token", token, {
+        httpOnly: true,
+        expires: new Date(Date.now() + 24 * 60 * 60),
+      })
+      .status(200)
+      .json(userInfo);
   } catch (error) {
-    next(error)
+    next(error);
   }
 };

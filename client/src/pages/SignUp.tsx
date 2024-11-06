@@ -9,42 +9,42 @@ export default function SingUp({}: Props) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
-      [e.target.id]: e.target.value
-    })
-  }
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) =>{
+      [e.target.id]: e.target.value,
+    });
+  };
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     try {
       setLoading(true);
-      const res: Response = await fetch('/api/auth/sign-up', {
-        method: 'POST',
+      const res: Response = await fetch("/api/auth/sign-up", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
-      });  
+      });
       const data = await res.json();
-      if(data.success === false){
+      if (data.success === false) {
         setError(data.message);
-        setLoading(false)
+        setLoading(false);
         return;
-      };
-      setLoading(false)
+      }
+      setLoading(false);
       console.log(data);
-    } catch (error:any) {
-      setLoading(false)
-      setError(error.message)
+    } catch (error: any) {
+      setLoading(false);
+      setError(error.message);
     }
-    setError(null)
-    navigate('/sign-in')
+    setError(null);
+    navigate("/sign-in");
   };
-  console.log(formData  )
+  console.log(formData);
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl text-center font-semibold my-7">Sign Up</h1>
@@ -70,8 +70,11 @@ export default function SingUp({}: Props) {
           id="password"
           onChange={handleChange}
         />
-        <button disabled={loading} className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
-          {loading ? 'Loading...' : 'Sing Up'}
+        <button
+          disabled={loading}
+          className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
+        >
+          {loading ? "Loading..." : "Sing Up"}
         </button>
       </form>
       <div className="flex gap-2 mt-5">
