@@ -30,7 +30,7 @@ app.get("/test", (req, res) => {
 app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
 
-//@ts-ignore
+//@ts-expect-error
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal Server Error";

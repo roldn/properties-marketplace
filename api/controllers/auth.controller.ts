@@ -4,8 +4,6 @@ import bcryptjs from "bcryptjs";
 import { errorHandler } from "../utils/error";
 
 import jwt from "jsonwebtoken";
-import { userInfo } from "os";
-import { SignJsonWebKeyInput } from "crypto";
 
 export const signup = async (
   req: Request,
