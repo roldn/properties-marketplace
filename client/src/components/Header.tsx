@@ -1,9 +1,13 @@
+import { RootState } from "../redux/store";
 import { FaSearch } from "react-icons/fa";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 type Props = {};
 
 export default function Header({}: Props) {
+  const { currentUser } = useSelector((state: RootState) => state.user);
+
   return (
     <>
       <header className="bg-slate-200 shadow-md">
@@ -38,8 +42,17 @@ export default function Header({}: Props) {
                 About
               </li>
             </Link>
-            <Link to="/login">
-              <li className=" text-slate-700 hover:underline">Sign In</li>
+            <Link to="/profile">
+              {currentUser ? (
+                //@ts-ignore
+                <img
+                  src={currentUser.avatar}
+                  alt="profile"
+                  className="rounded-full h-7 w-7 object-cover "
+                />
+              ) : (
+                <li className=" text-slate-700 hover:underline">Sign In</li>
+              )}
             </Link>
           </ul>
         </div>

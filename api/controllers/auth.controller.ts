@@ -10,7 +10,6 @@ export const signup = async (
   res: Response,
   next: NextFunction,
 ) => {
-  console.log(req.body);
   const {
     username,
     password,
@@ -99,29 +98,24 @@ export const google = async (
           Math.random().toString(36).slice(-4),
         email: req.body.email,
         password: hashedPassword,
-        avatar: req.body.imageUrl,
+        avatar: req.body.photo,
       });
 
       await newUser.save();
 
       const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET!);
-
-      const { password: pass, ...rest } = newUser;
-
-      res
-        .cookie("access_token", token, { httpOnly: true })
-        .status(200)
-        .json({
-          message: "User created and authenticated successfully",
-          user: rest,
-        });
+      //@ts-expect-error
+      const { password: pass, ...rest } = newUser._doc;
+      res.cookie("access_token", token, { httpOnly: true }).status(200).json({
+        message: "User created and authenticated successfully",
+        user: rest,
+      });
     }
   } catch (error) {
-    // Send more detailed error message
-    //@ts-ignore
     res
       .status(500)
+      //@ts-expect-error
       .json({ message: "Something went wrong", error: error.message });
-    next(error); // Optionally, call next() if you want to propagate the error
+    next(error);
   }
 };

@@ -24,11 +24,12 @@ export default function OAuth({}: Props) {
         body: JSON.stringify({
           name: result.user.displayName,
           email: result.user.email,
-          potho: result.user.photoURL,
+          photo: result.user.photoURL,
         }),
       });
+
       const data = await res.json();
-      dispatch(signInSuccess(data));
+      dispatch(signInSuccess(data.user));
       navigate("/");
     } catch (error) {
       console.log("Could not sign up with google", error);

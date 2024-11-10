@@ -31,21 +31,20 @@ export default function SingUp({}: Props) {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
+      data;
       if (data.success === false) {
         setError(data.message);
         setLoading(false);
         return;
       }
       setLoading(false);
-      console.log(data);
+      setError(null);
     } catch (error: any) {
       setLoading(false);
       setError(error.message);
     }
-    setError(null);
     navigate("/sign-in");
   };
-  console.log(formData);
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl text-center font-semibold my-7">Sign Up</h1>

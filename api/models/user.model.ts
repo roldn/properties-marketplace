@@ -25,8 +25,7 @@ const userSchema = new Schema<IUser>(
     },
     avatar: {
       type: String,
-      default:
-        "https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.jpg",
+      required: false,
     },
   },
   { timestamps: true },
