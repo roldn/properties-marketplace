@@ -7,6 +7,7 @@ type Props = {};
 
 export default function Header({}: Props) {
   const { currentUser } = useSelector((state: RootState) => state.user);
+  console.log(currentUser?.avatar);
 
   return (
     <>

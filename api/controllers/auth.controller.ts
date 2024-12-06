@@ -69,29 +69,30 @@ export const google = async (
 ) => {
   try {
     const user = await User.findOne({ email: req.body.email });
+    //@ts-ignore
+    const generateToken = (userData) => {
+      return jwt.sign({ id: userData?._id }, process.env.JWT_SECRET!, {
+        expiresIn: "1d", // Optional: add token expiration
+      });
+    };
 
     if (user) {
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!);
-
+      const token = generateToken(user);
       //@ts-expect-error
       const { password: pass, ...rest } = user._doc;
-
       res
         .cookie("access_token", token, {
           httpOnly: true,
           secure: process.env.NODE_ENV === "production",
-          expires: new Date(Date.now() + 3600000), // 1 hour expiry
+          sameSite: "strict",
         })
         .status(200)
-        .json({ message: "Authenticated successfully", user: rest });
+        .json(rest);
     } else {
-      // Generate a random password (consider using a more secure method)
       const generatedPassword =
         Math.random().toString(36).slice(-8) +
         Math.random().toString(36).slice(-8);
-
       const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
-
       const newUser = new User({
         username:
           req.body.name.split(" ").join("").toLowerCase() +
@@ -100,16 +101,14 @@ export const google = async (
         password: hashedPassword,
         avatar: req.body.photo,
       });
-
       await newUser.save();
-
       const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET!);
       //@ts-expect-error
       const { password: pass, ...rest } = newUser._doc;
-      res.cookie("access_token", token, { httpOnly: true }).status(200).json({
-        message: "User created and authenticated successfully",
-        user: rest,
-      });
+      res
+        .cookie("access_token", token, { httpOnly: true })
+        .status(200)
+        .json(rest);
     }
   } catch (error) {
     res
@@ -119,3 +118,48 @@ export const google = async (
     next(error);
   }
 };
+
+// //@ts-ignore
+// export const google = async (req, res, next) => {
+//   try {
+//     const user = await User.findOne({ email: req.body.email });
+//     if (user) {
+//       //@ts-ignore
+//       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+//       //@ts-ignore
+//       const { password: pass, ...rest } = user._doc;
+//       res
+//         .cookie('access_token', token, { httpOnly: true })
+//         .status(200)
+//         .json(rest);
+//     } else {
+//       const generatedPassword =
+//         Math.random().toString(36).slice(-8) +
+//         Math.random().toString(36).slice(-8);
+//       const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
+//       const newUser = new User({
+//         username:
+//           req.body.name.split(' ').join('').toLowerCase() +
+//           Math.random().toString(36).slice(-4),
+//         email: req.body.email,
+//         password: hashedPassword,
+//         avatar: req.body.photo,
+//       });
+//       await newUser.save();
+//       //@ts-ignore
+//       const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
+//       //@ts-ignore
+//       const { password: pass, ...rest } = newUser._doc;
+//       res
+//         .cookie('access_token', token, { httpOnly: true })
+//         .status(200)
+//         .json(rest);
+//     }
+//   } catch (error) {
+//     res
+//       .status(500)
+//       //@ts-expect-error
+//       .json({ message: "Something went wrong", error: error.message });
+//     next(error);
+//   }
+// };
