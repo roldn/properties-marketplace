@@ -1,5 +1,7 @@
 import express from "express";
 import { google, signin, signup } from "../controllers/auth.controller";
+import { updateUser } from "../controllers/user.controller";
+import { verifyToken } from "../utils/verifyUser";
 
 const router = express.Router();
 
